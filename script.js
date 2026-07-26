@@ -1,57 +1,101 @@
-window.addEventListener('scroll', () => {
-    const navbar = document.getElementById('navbar');
-    const progressBar = document.getElementById('scroll-progress');
-    
-    const windowScroll = document.documentElement.scrollTop || document.body.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolledPercentage = (windowScroll / height) * 100;
-    
-    if(progressBar) {
-        progressBar.style.width = scrolledPercentage + '%';
-    }
+let hr=0;
+let min=0;
+let sec=0;
+let ms=0;
 
-    if (windowScroll > 40) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
+let timer=null;
 
-    // Active Section Link Tracker
-    const sections = document.querySelectorAll('section');
-    const navItems = document.querySelectorAll('.nav-item');
-    
-    let currentSectionId = '';
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.clientHeight;
-        
-        if (windowScroll >= (sectionTop - sectionHeight / 3)) {
-            currentSectionId = section.getAttribute('id');
-        }
-    });
+let lapCount=1;
 
-    navItems.forEach(item => {
-        item.classList.remove('active');
-        if (item.getAttribute('href') === #${currentSectionId}) {
-            item.classList.add('active');
-        }
-    });
-});
+const display=document.getElementById("display");
 
-// Mobile Layout Drawer Trigger Elements
-const mobileMenu = document.getElementById('mobile-menu');
-const navLinks = document.querySelector('.nav-links');
+function stopwatch(){
 
-if(mobileMenu && navLinks) {
-    mobileMenu.addEventListener('click', () => {
-        mobileMenu.classList.toggle('is-active');
-        navLinks.classList.toggle('active');
-    });
+ms++;
 
-    document.querySelectorAll('.nav-item').forEach(link => {
-        link.addEventListener('click', () => {
-            mobileMenu.classList.remove('is-active');
-            navLinks.classList.remove('active');
-        });
-    });
+if(ms==100){
+
+sec++;
+ms=0;
+
+}
+
+if(sec==60){
+
+min++;
+sec=0;
+
+}
+
+if(min==60){
+
+hr++;
+min=0;
+
+}
+
+let h=String(hr).padStart(2,'0');
+
+let m=String(min).padStart(2,'0');
+
+let s=String(sec).padStart(2,'0');
+
+let milli=String(ms).padStart(3,'0');
+
+display.innerHTML=`${h}:${m}:${s}:${milli}`;
+
+}
+
+document.getElementById("start").onclick=function(){
+
+if(timer!=null)return;
+
+timer=setInterval(stopwatch,10);
+
+}
+
+document.getElementById("pause").onclick=function(){
+
+clearInterval(timer);
+
+timer=null;
+
+}
+
+document.getElementById("reset").onclick=function(){
+
+clearInterval(timer);
+
+timer=null;
+
+hr=0;
+
+min=0;
+
+sec=0;
+
+ms=0;
+
+lapCount=1;
+
+display.innerHTML="00:00:00:000";
+
+document.getElementById("laps").innerHTML="";
+
+}
+
+document.getElementById("lap").onclick=function(){
+
+if(timer==null)return;
+
+let lap=document.createElement("div");
+
+lap.className="lap";
+
+lap.innerHTML=`🏁 Lap ${lapCount} : ${display.innerHTML}`;
+
+document.getElementById("laps").prepend(lap);
+
+lapCount++;
+
 }
